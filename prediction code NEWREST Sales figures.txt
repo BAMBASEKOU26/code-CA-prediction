@@ -1,0 +1,76 @@
+import pandas as pd
+import numpy as np
+
+
+df = pd.read_excel("Newrest.xlsx", sheet_name= "Sample")
+df
+
+
+df['Prix d\'achat HT'] = df['Prix d\'achat TTC'] - (df['Prix d\'achat TTC'] * (5.5/100))
+df['Marges'] = df['CA HT'] - df['Prix d\'achat HT']
+df
+
+
+df.info
+
+df.columns
+
+nom_Produits= df['Produits'].unique()
+nom_Produits
+
+nombres_Produits= df.groupby(df['Produits'], sort = False).size()
+nombres_Produits
+
+
+import matplotlib.pyplot as plt
+plt.bar(nom_Produits, nombres_Produits, color=['r','blue','orange','y', 'green', 'black'])
+plt.title('DIAGRAMME: PRODUITS vs NOMBRE')
+plt.xlabel('NOM DES PRODUITS')
+plt.ylabel('NOMBRE')
+plt.show()
+
+
+x = df.iloc[:, [3,4,5,6]].values
+y = df.iloc[:, 1].values
+print(x,y)
+
+
+from sklearn.model_selection import train_test_split
+x_train, x_test, y_train, y_test = train_test_split(x,y,random_state = 0)
+
+
+from sklearn.preprocessing import MinMaxScaler
+
+scaler = MinMaxScaler()
+x_train = scaler.fit_transform(x_train)
+x_test = scaler.transform(x_test)
+
+
+
+from sklearn.neighbors import KNeighborsClassifier
+MODEL = KNeighborsClassifier(n_neighbors= 7, metric = 'euclidean')
+
+
+MODEL.fit(x_train, y_train)
+
+
+y_pred = MODEL.predict(x_test)
+y_pred
+
+
+y_test
+
+
+
+from sklearn.metrics import accuracy_score
+accuracy_score(y_test, y_pred)*100
+
+
+from sklearn.metrics import confusion_matrix
+confusion_matrix(y_test, y_pred)
+
+
+
+
+
+
